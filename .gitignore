@@ -1,0 +1,100 @@
+# Marble Game Project .gitignore
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Build artifacts and binaries
+/[Bb]uild/
+/[Dd]ist/
+/[Bb]in/
+/[Oo]bj/
+*.o
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+
+# Dependency directories
+/node_modules/
+/vendor/
+/packages/
+/bower_components/
+
+# IDE/Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+.vs/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# Game engine specific (Unity)
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Game engine specific (Unreal)
+/Binaries/
+/DerivedDataCache/
+/Intermediate/
+/Saved/
+*.VC.db
+*.opensdf
+*.sdf
+*.suo
+*.xcworkspace
+*.sln.docstates
+
+# Custom project specific files
+/assets/raw/
+/backups/
+*.log
+*.bak
+
+node_modules
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# SQLite
+*.db
