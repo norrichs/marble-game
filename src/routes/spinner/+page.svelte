@@ -4,10 +4,12 @@
 		`M500,500C500,500 724.67,434.818 509.058,343.808C416.212,304.617 271.482,147.16 500,117.479`
 	);
 	let copies = $state(3);
+  let fillColor = "rgba(0,0,0,0.5)"
+  let centralRadius = $state(30)
 
 	let styleObj = $state({
 		col: 'green',
-		lin: 'blue',
+		lin: 'none',
 		period: '100s'
 	});
 
@@ -25,13 +27,13 @@
 
 <main style={`${styleVariables}`}>
 	<svg class="canvas" viewBox="-500 -500 1000 1000">
-		<circle cx={0} cy={0} r="10" />
+		<circle cx={0} cy={0} r={centralRadius} fill={fillColor}/>
 		<g class="clockwise spinner">
 			{#each { length: copies }, i}
 				<g transform={`rotate(${(i * 360) / copies})`}>
 					<path
 						d={curve}
-						fill="none"
+						fill={fillColor}
 						stroke-width={3}
 						transform={`scale(-1 1), translate(-500 -500)`}
 					/>
@@ -41,7 +43,7 @@
 		<g class="counter_clockwise spinner">
 			{#each { length: copies }, i}
 				<g transform={`rotate(${(i * 360) / copies})`}>
-					<path d={curve} fill="none" stroke-width={3} transform={` translate(-500 -500)`} />
+					<path d={curve} fill={fillColor} stroke-width={3} transform={` translate(-500 -500)`} />
 				</g>
 			{/each}
 		</g>
@@ -78,6 +80,7 @@
 		background-color: transparent;
 	}
 	.spinner {
+    stroke-width: 0;
 		stroke: var(--lin);
 	}
 	.clockwise {
