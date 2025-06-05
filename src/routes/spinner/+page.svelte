@@ -1,10 +1,13 @@
 <script lang="ts">
-	import { parsePath } from '$lib/spinner/spinner';
-	import { curves } from '$lib/spinner/curves';
-	let curve = $state(curves[0].paths[0]);
+	import { savedCurves } from '$lib/spinner/curves';
+	let curve = $state(savedCurves[0].paths[0]);
+	let curves = $state(savedCurves[0].paths);
 	let copies = $state(3);
-	let fillColor = 'rgba(0,0,0,0.5)';
+	let fill = $state(true);
+	let reverse = $state(false);
+	let fillColor = 'rgba(0,0,0,.3)';
 	let centralRadius = $state(30);
+	let firstOnly = $state(true);
 
 	let styleObj = $state({
 		col: 'green',
@@ -12,14 +15,40 @@
 		period: '100s'
 	});
 
-	console.debug($state.snapshot(curve), parsePath($state.snapshot(curve)));
+	const extractPathString = (text: string) => {
+		const dValues: string[] = [];
+		const regex = /<path\b[^>]*\sd="([^"]*)"/gi;
+		let match;
+		while ((match = regex.exec(text)) !== null) {
+			dValues.push(match[1]);
+		}
+		return dValues;
+	};
+
+	const onLoadFile = (e: Event) => {
+		const textContent = (e.target as FileReader)?.result as string;
+		const extracted = extractPathString(textContent);
+		console.debug('extracted', extracted);
+		curve = extracted[0];
+		curves = extracted;
+	};
+
+	const handleDrop = (ev: DragEvent) => {
+		ev.preventDefault();
+		const files = ev.dataTransfer?.files;
+		if (files && files.length > 0) {
+			const file = files[0];
+			const reader = new FileReader();
+			reader.onload = onLoadFile;
+			reader.readAsText(file);
+		}
+	};
 
 	let styleVariables = $derived.by(() => {
 		const result = Object.entries(styleObj)
 			.map(([k, v]) => `--${k}: ${v}`)
 			.join('; ');
 
-		console.debug(result);
 		return result;
 	});
 </script>
@@ -27,22 +56,53 @@
 <main style={`${styleVariables}`}>
 	<svg class="canvas" viewBox="-500 -500 1000 1000">
 		<circle cx={0} cy={0} r={centralRadius} fill={fillColor} />
-		<g class="clockwise spinner">
+		<g class={`${reverse ? 'counter-clockwise' : 'clockwise'} spinner`}>
 			{#each { length: copies }, i}
 				<g transform={`rotate(${(i * 360) / copies})`}>
-					<path
-						d={curve}
-						fill={fillColor}
-						stroke-width={3}
-						transform={`scale(-1 1), translate(-500 -500)`}
-					/>
+					{#if firstOnly}
+						<path
+							d={curve}
+							fill={fill ? fillColor : 'none'}
+							stroke={fill ? 'none' : 'black'}
+							stroke-width={3}
+							transform={`scale(-1 1), translate(-500 -500)`}
+						/>
+					{:else}
+						{#each curves as c}
+							<path
+								d={c}
+								fill={fill ? fillColor : 'none'}
+								stroke={fill ? 'none' : 'black'}
+								stroke-width={3}
+								transform={`scale(-1 1), translate(-500 -500)`}
+							/>
+						{/each}
+					{/if}
 				</g>
 			{/each}
 		</g>
-		<g class="counter_clockwise spinner">
+		<g class={`${reverse ? 'clockwise' : 'counter-clockwise'} spinner`}>
 			{#each { length: copies }, i}
 				<g transform={`rotate(${(i * 360) / copies})`}>
-					<path d={curve} fill={fillColor} stroke-width={3} transform={` translate(-500 -500)`} />
+					{#if firstOnly}
+						<path
+							d={curve}
+							fill={fill ? fillColor : 'none'}
+							stroke={fill ? 'none' : 'black'}
+							stroke-width={3}
+							transform={` translate(-500 -500)`}
+						/>
+					{:else}
+						{#each curves as c}
+							<path
+								d={c}
+								fill={fill ? fillColor : 'none'}
+								stroke={fill ? 'none' : 'black'}
+								stroke-width={3}
+								transform={` translate(-500 -500)`}
+							/>
+						{/each}
+					{/if}
 				</g>
 			{/each}
 		</g>
@@ -56,11 +116,35 @@
 			oninput={(ev: Event) => (styleObj.period = `${(ev.target as HTMLInputElement)?.value}s`)}
 		/>
 		<input type="number" min={1} bind:value={copies} />
+		<div><span>Fill?</span><input type="checkbox" bind:checked={fill} /></div>
+		<div><span>Reverse?</span><input type="checkbox" bind:checked={reverse} /></div>
+		<div><span>First Only?</span><input type="checkbox" bind:checked={firstOnly} /></div>
 		<textarea bind:value={curve}></textarea>
+		<button
+			id="dropzone"
+			ondrop={handleDrop}
+			ondragover={(e) => {
+				e.preventDefault();
+			}}
+		>
+			<div>Drop SVG file here</div>
+			<div></div>
+		</button>
 	</div>
 </main>
 
 <style>
+	#dropzone {
+		width: 150px;
+		height: 150px;
+		background-color: gray;
+		border: 1px solid black;
+		border-radius: 20px;
+		color: white;
+		display: flex;
+		place-items: center;
+		text-align: center;
+	}
 	main {
 		display: flex;
 		flex-direction: row;
@@ -86,7 +170,7 @@
 		animation: spin_clockwise 20s linear infinite;
 		animation-duration: var(--period);
 	}
-	.counter_clockwise {
+	.counter-clockwise {
 		animation: spin_counter_clockwise 20s linear infinite;
 		animation-duration: var(--period);
 	}

@@ -1,4 +1,4 @@
-export const curves = [
+export const savedCurves = [
 	{
 		name: 'no name',
 		paths: [
