@@ -2,7 +2,7 @@
 	import { savedCurves } from '$lib/spinner/curves';
 	let curve = $state(savedCurves[0].paths[0]);
 	let curves = $state(savedCurves[0].paths);
-	let copies = $state(3);
+	let copies = $state(6);
 	let fill = $state(true);
 	let reverse = $state(false);
 	let fillColor = 'rgba(50,0,0,.9)';
