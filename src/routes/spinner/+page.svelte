@@ -5,7 +5,8 @@
 	let copies = $state(3);
 	let fill = $state(true);
 	let reverse = $state(false);
-	let fillColor = 'rgba(0,0,0,.3)';
+	let fillColor = 'rgba(50,0,0,.9)';
+	let fillColor2 = 'rgba(0,50,0,.9)';
 	let centralRadius = $state(30);
 	let firstOnly = $state(true);
 
@@ -71,7 +72,7 @@
 						{#each curves as c}
 							<path
 								d={c}
-								fill={fill ? fillColor : 'none'}
+								fill={fill ? fillColor2 : 'none'}
 								stroke={fill ? 'none' : 'black'}
 								stroke-width={3}
 								transform={`scale(-1 1), translate(-500 -500)`}
@@ -87,7 +88,7 @@
 					{#if firstOnly}
 						<path
 							d={curve}
-							fill={fill ? fillColor : 'none'}
+							fill={fill ? fillColor2 : 'none'}
 							stroke={fill ? 'none' : 'black'}
 							stroke-width={3}
 							transform={` translate(-500 -500)`}
